@@ -9,7 +9,6 @@ const { jwtSecret } = require('../../config/secrets');
 // middlewares?
 const validateRegister = require('../middleware/validateRegister');
 const validateLogin = require('../middleware/validateLogin');
-const { userParams } = require('../../data/dbConfig');
 
 router.post('/register', validateRegister, async (req, res) => {
 	res.end('implement register, please!');
@@ -50,7 +49,7 @@ router.post('/register', validateRegister, async (req, res) => {
   */
 });
 
-router.post('/login', validateRegister, async (req, res) => {
+router.post('/login', validateLogin, async (req, res) => {
 	res.end('implement login, please!');
 	console.log('login endpoint');
 	try {
@@ -89,5 +88,16 @@ router.post('/login', validateRegister, async (req, res) => {
       the response body should include a string exactly as follows: "invalid credentials".
   */
 });
+
+const makeToken = (user) => {
+	const payload = {
+		subejct: user.id,
+		username: user.username,
+	};
+	const options = {
+		expiresIn: '10mins',
+	};
+	return jwt.sign(payload, jwtSecret, options);
+};
 
 module.exports = router;
