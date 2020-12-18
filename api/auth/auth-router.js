@@ -1,8 +1,28 @@
 const router = require('express').Router();
+const bcrypt = require('bcryptjs');
+const jwt = require('jsonwebtoken');
 
-router.post('/register', (req, res) => {
-  res.end('implement register, please!');
-  /*
+const User = requrie('../users/users-model.js');
+
+const { jwtSecret } = require('../../config/secrets');
+
+// middlewares?
+const validateRegister = require('../middleware/validateRegister');
+
+router.post('/register', validateRegister, async (req, res) => {
+	res.end('implement register, please!');
+	console.log('register endpoint');
+	const rounds = process.env.BCRYPT_ROUNDS || 10;
+	const hash = bcrypt.hashSync(req.user.password, rounds);
+	req.user.password = hash;
+	try {
+		const user = await User.add(req.user);
+		res.status(201).json(user);
+	} catch (err) {
+		console.log(err.message);
+		res.status(500).json('500 server error');
+	}
+	/*
     IMPLEMENT
     You are welcome to build additional middlewares to help with the endpoint's functionality.
 
@@ -29,8 +49,9 @@ router.post('/register', (req, res) => {
 });
 
 router.post('/login', (req, res) => {
-  res.end('implement login, please!');
-  /*
+	res.end('implement login, please!');
+	console.log('login endpoint');
+	/*
     IMPLEMENT
     You are welcome to build additional middlewares to help with the endpoint's functionality.
 
